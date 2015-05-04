@@ -148,7 +148,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -1532,7 +1532,7 @@ CheckPython() {
     %ifarch ppc64le aarch64
     -x test_faulthandler \
     %endif
-    %ifarch %{power64} s390 s390x
+    %ifarch %{power64} s390 s390x armv7hl aarch64
     -x test_gdb
     %endif
 
@@ -1977,6 +1977,9 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Mon Jan 25 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-4
+- Disable test_gdb on aarch64 (rhbz#1196181), it joins all other non x86 arches
+
 * Mon Jan 25 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-3
 - Require python/python3-rpm-macros for python/python3 macros
 
