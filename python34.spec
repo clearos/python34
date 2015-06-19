@@ -1269,7 +1269,7 @@ cp -ar Tools/demo %{buildroot}%{pylibdir}/Tools/
 rm -f %{buildroot}%{pylibdir}/email/test/data/audiotest.au %{buildroot}%{pylibdir}/test/audiotest.au
 
 %if "%{_lib}" == "lib64"
-install -d -m 0755 %{buildroot}/usr/lib/python%{pybasever}/site-packages/__pycache__
+install -d -m 0755 %{buildroot}/%{_prefix}/lib/python%{pybasever}/site-packages/__pycache__
 %endif
 
 # Make python3-devel multilib-ready (bug #192747, #139911)
@@ -1978,6 +1978,7 @@ rm -fr %{buildroot}
 
 %changelog
 * Mon Jan 25 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-4
+- Make relocating Python by changing _prefix actually work
 - Disable test_gdb on aarch64 (rhbz#1196181), it joins all other non x86 arches
 
 * Mon Jan 25 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-3
