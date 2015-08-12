@@ -919,7 +919,7 @@ done
 
 # Since we unbundle pip, our version is different from upstream
 %if 0%{with_rewheel}
-%global pip_version 7.0.3
+%global pip_version 7.1.0
 sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/ensurepip/__init__.py
 %endif
 
