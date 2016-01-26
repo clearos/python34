@@ -1570,7 +1570,6 @@ rm -fr %{buildroot}
 
 
 %files
-%defattr(-, root, root)
 %doc LICENSE README
 %{_bindir}/pydoc*
 %if 0%{?main_python3}
@@ -1585,7 +1584,6 @@ rm -fr %{buildroot}
 %{_mandir}/*/*
 
 %files libs
-%defattr(-,root,root,-)
 %doc LICENSE README
 %dir %{pylibdir}
 %dir %{dynload_dir}
@@ -1798,7 +1796,6 @@ rm -fr %{buildroot}
 %endif
 
 %files devel
-%defattr(-,root,root)
 %{pylibdir}/config-%{LDVERSION_optimized}/*
 %exclude %{pylibdir}/config-%{LDVERSION_optimized}/Makefile
 %{_includedir}/python%{LDVERSION_optimized}/*.h
@@ -1819,7 +1816,6 @@ rm -fr %{buildroot}
 %{_rpmconfigdir}/macros.d/macros.pybytecompile%{pybasever}
 
 %files tools
-%defattr(-,root,root,755)
 %if 0%{?main_python3}
 %{_bindir}/2to3-3
 %endif
@@ -1829,7 +1825,6 @@ rm -fr %{buildroot}
 %doc %{pylibdir}/Doc
 
 %files tkinter
-%defattr(-,root,root,755)
 %{pylibdir}/tkinter
 %exclude %{pylibdir}/tkinter/test
 %{dynload_dir}/_tkinter.%{SOABI_optimized}.so
@@ -1842,7 +1837,6 @@ rm -fr %{buildroot}
 %{pylibdir}/turtledemo/__pycache__/*%{bytecode_suffixes}
 
 %files test
-%defattr(-, root, root)
 %{pylibdir}/ctypes/test
 %{pylibdir}/distutils/tests
 %{pylibdir}/sqlite3/test
@@ -1864,7 +1858,6 @@ rm -fr %{buildroot}
 
 %if 0%{?with_debug_build}
 %files debug
-%defattr(-,root,root,-)
 
 # Analog of the core subpackage's files:
 %{_bindir}/python%{LDVERSION_debug}
