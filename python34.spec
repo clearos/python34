@@ -148,7 +148,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -223,10 +223,6 @@ Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.xz
 Source1: find-provides-without-python-sonames.sh
 %global _use_internal_dependency_generator 0
 %global __find_provides %{SOURCE1}
-
-# Supply various useful macros for building python 3 modules:
-#  __python3, python3_sitelib, python3_sitearch
-Source2: macros.python%{pybasever}
 
 # Supply an RPM macro "py_byte_compile" for the python3-devel subpackage
 # to enable specfiles to selectively byte-compile individual files and paths
@@ -810,6 +806,8 @@ Summary: Libraries and header files needed for Python 3 development
 Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{version}-%{release}
+Requires: python-rpm-macros
+Requires: python3-rpm-macros
 Conflicts: %{name} < %{version}-%{release}
 
 %description devel
@@ -1396,7 +1394,6 @@ find %{buildroot} \
 
 # Install macros for rpm:
 mkdir -p %{buildroot}/%{_rpmconfigdir}/macros.d/
-install -m 644 %{SOURCE2} %{buildroot}/%{_rpmconfigdir}/macros.d/
 install -m 644 %{SOURCE3} %{buildroot}/%{_rpmconfigdir}/macros.d/
 
 # Ensure that the curses module was linked against libncursesw.so, rather than
@@ -1988,6 +1985,9 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Mon Jan 25 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-3
+- Require python/python3-rpm-macros for python/python3 macros
+
 * Thu Jun 11 2015 Matej Stuchlik <mstuchli@redhat.com> - 3.4.3-2
 - Review Request fixes
 
