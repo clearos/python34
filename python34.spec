@@ -1816,7 +1816,6 @@ rm -fr %{buildroot}
 %if 0%{?main_python3}
 %{_libdir}/pkgconfig/python3.pc
 %endif
-%{_rpmconfigdir}/macros.d/macros.python%{pybasever}
 %{_rpmconfigdir}/macros.d/macros.pybytecompile%{pybasever}
 
 %files tools
