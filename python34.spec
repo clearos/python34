@@ -148,7 +148,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -738,6 +738,23 @@ Patch203: 00203-disable-threading-test-koji.patch
 # openssl requires DH keys to be > 768bits
 Patch204: 00204-increase-dh-keys-size.patch
 
+# 00237 #
+# CVE-2016-0772 python: smtplib StartTLS stripping attack
+#   https://bugzilla.redhat.com/show_bug.cgi?id=1303647
+#   FIXED UPSTREAM: https://hg.python.org/cpython/rev/d590114c2394
+# Raise an error when STARTTLS fails
+# Resolves: rhbz#1348973
+Patch237: 00237-CVE-2016-0772-smtplib.patch
+
+# 00238 #
+# CVE-2016-5699 python: http protocol steam injection attack
+#   https://bugzilla.redhat.com/show_bug.cgi?id=1303699
+#   FIXED UPSTREAM: https://hg.python.org/cpython/rev/bf3e1c9b80e9
+# Disabled HTTP header injections in http.client
+# Resolves: rhbz#1348982
+Patch238: 00238-CVE-2016-5699-http-client.patch
+
+
 # (New patches go here ^^^)
 #
 # When adding new patches to "python" and "python3" in Fedora 17 onwards,
@@ -1028,6 +1045,8 @@ sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/en
 %patch202 -p1
 %patch203 -p1
 %patch204 -p1
+%patch237 -p1
+%patch238 -p1
 
 
 # Currently (2010-01-15), http://docs.python.org/library is for 2.6, and there
@@ -1977,6 +1996,13 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Fri Jul 08 2016 Tomas Orsava <torsava@redhat.com> - 3.4.3-5
+- Fix for CVE-2016-0772 python: smtplib StartTLS stripping attack (rhbz#1303647)
+  Raise an error when STARTTLS fails (upstream patch)
+- Fix for CVE-2016-5699 python: http protocol steam injection attack (rhbz#1303699)
+  Disabled HTTP header injections in http.client (upstream patch)
+Resolves: rhbz#1348973, rhbz#1348982
+
 * Mon Jan 25 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-4
 - Make relocating Python by changing _prefix actually work
 - Disable test_gdb on aarch64 (rhbz#1196181), it joins all other non x86 arches
