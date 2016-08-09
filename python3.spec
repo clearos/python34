@@ -14,7 +14,7 @@
 # 4) python3-setuptools and python3-pip with with_rewheel set to 1
 # 5) python3 with with_rewheel set to 1
 
-%global with_rewheel 1
+%global with_rewheel 0
 
 %global pybasever 3.4
 
