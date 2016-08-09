@@ -148,7 +148,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.3
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -754,26 +754,24 @@ Patch237: 00237-CVE-2016-0772-smtplib.patch
 # Resolves: rhbz#1348982
 Patch238: 00238-CVE-2016-5699-http-client.patch
 
+# 00241 #
+# CVE-2016-5636: http://seclists.org/oss-sec/2016/q2/560
+# rhbz#1356365: https://bugzilla.redhat.com/show_bug.cgi?id=1356365
+# https://hg.python.org/cpython/rev/985fc64c60d6/
+# https://hg.python.org/cpython/rev/2edbdb79cd6d
+# Fix possible integer overflow and heap corruption in zipimporter.get_data()
+# FIXED UPSTREAM: https://bugs.python.org/issue26171
+Patch241: 00241-CVE-2016-5636-buffer-overflow-in-zipimport-module-fix.patch
+
 
 # (New patches go here ^^^)
 #
-# When adding new patches to "python" and "python3" in Fedora 17 onwards,
-# please try to keep the patch numbers in-sync between the two specfiles:
+# When adding new patches to "python" and "python3" in Fedora, EL, etc.,
+# please try to keep the patch numbers in-sync between all specfiles.
 #
-#   - use the same patch number across both specfiles for conceptually-equivalent
-#     fixes, ideally with the same name
+# More information, and a patch number catalog, is at:
 #
-#   - when a patch is relevant to both specfiles, use the same introductory
-#     comment in both specfiles where possible (to improve "diff" output when
-#     comparing them)
-#
-#   - when a patch is only relevant for one of the two specfiles, leave a gap
-#     in the patch numbering in the other specfile, adding a comment when
-#     omitting a patch, both in the manifest section here, and in the "prep"
-#     phase below
-#
-# Hopefully this will make it easier to ensure that all relevant fixes are
-# applied to both versions.
+#     https://fedoraproject.org/wiki/SIGs/Python/PythonPatches
 
 # This is the generated patch to "configure"; see the description of
 #   %{regenerate_autotooling_patch}
@@ -1047,6 +1045,7 @@ sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/en
 %patch204 -p1
 %patch237 -p1
 %patch238 -p1
+%patch241 -p1
 
 
 # Currently (2010-01-15), http://docs.python.org/library is for 2.6, and there
@@ -1996,6 +1995,10 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Tue Aug 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 3.4.3-6
+- Fix CVE-2016-5636
+- SPEC file cleanup
+
 * Fri Jul 08 2016 Tomas Orsava <torsava@redhat.com> - 3.4.3-5
 - Fix for CVE-2016-0772 python: smtplib StartTLS stripping attack (rhbz#1303647)
   Raise an error when STARTTLS fails (upstream patch)
