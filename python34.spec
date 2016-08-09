@@ -148,7 +148,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.3
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -763,6 +763,13 @@ Patch238: 00238-CVE-2016-5699-http-client.patch
 # FIXED UPSTREAM: https://bugs.python.org/issue26171
 Patch241: 00241-CVE-2016-5636-buffer-overflow-in-zipimport-module-fix.patch
 
+# 00242 #
+# HTTPoxy attack (CVE-2016-1000110)
+# https://httpoxy.org/
+# FIXED UPSTREAM: http://bugs.python.org/issue27568
+# Based on a patch by Rémi Rampin
+# Resolves: rhbz#1359179
+Patch242: 00242-CVE-2016-1000110-httpoxy.patch
 
 # (New patches go here ^^^)
 #
@@ -1046,6 +1053,7 @@ sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/en
 %patch237 -p1
 %patch238 -p1
 %patch241 -p1
+%patch242 -p1
 
 
 # Currently (2010-01-15), http://docs.python.org/library is for 2.6, and there
@@ -1995,6 +2003,9 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Tue Aug 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 3.4.3-7
+- Fix for CVE-2016-1000110 HTTPoxy attack
+
 * Tue Aug 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 3.4.3-6
 - Fix CVE-2016-5636
 - SPEC file cleanup
