@@ -775,6 +775,10 @@ URL: http://www.python.org/
 %global __requires_exclude ^python\\(abi\\) = 3\\..$
 %global __provides_exclude ^python\\(abi\\) = 3\\..$
 
+# We keep those inside on purpose
+Provides: bundled(python3-pip) = 6.0.8
+Provides: bundled(python3-setuptools) = 12.0.5
+
 %description
 Python 3.5 package for developers.
 No security fixes will be applied.
