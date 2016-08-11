@@ -772,7 +772,8 @@ URL: http://www.python.org/
 # We'll not provide this, on purpose
 # No package in Fedora shall ever depend on this
 # Provides: python(abi) = %{pybasever}
-
+%global __requires_exclude ^python\\(abi\\) = 3\\..$
+%global __provides_exclude ^python\\(abi\\) = 3\\..$
 
 %description
 Python 3.5 package for developers.
