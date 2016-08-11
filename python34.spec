@@ -194,12 +194,6 @@ BuildRequires: python-rpm-macros
 
 Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.xz
 
-# Avoid having various bogus auto-generated Provides lines for the various
-# python c modules' SONAMEs:
-Source1: find-provides-without-python-sonames.sh
-%global _use_internal_dependency_generator 0
-%global __find_provides %{SOURCE1}
-
 # Supply an RPM macro "py_byte_compile" for the python3-devel subpackage
 # to enable specfiles to selectively byte-compile individual files and paths
 # with different Python runtimes as necessary:
@@ -769,9 +763,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 URL: http://www.python.org/
 
-# We'll not provide this, on purpose
+# We don't want to provide this
 # No package in Fedora shall ever depend on this
-# Provides: python(abi) = %{pybasever}
 %global __requires_exclude ^python\\(abi\\) = 3\\..$
 %global __provides_exclude ^python\\(abi\\) = 3\\..$
 
@@ -789,7 +782,6 @@ No security fixes will be applied.
 
 %prep
 %setup -q -n Python-%{version}%{?prerel}
-chmod +x %{SOURCE1}
 
 %if 0%{?with_systemtap}
 # Provide an example of usage of the tapset:
