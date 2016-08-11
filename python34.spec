@@ -1294,15 +1294,6 @@ for Module in %{buildroot}/%{dynload_dir}/*.so ; do
     esac
 done
 
-# Create "/usr/bin/python3-debug", a symlink to the python3 debug binary, to
-# avoid the user having to know the precise version and ABI flags.  (see
-# e.g. rhbz#676748):
-%if 0%{?with_debug_build}
-ln -s \
-  %{_bindir}/python%{LDVERSION_debug} \
-  %{buildroot}%{_bindir}/python3-debug
-%endif
-
 #
 # Systemtap hooks:
 #
@@ -1343,6 +1334,15 @@ echo -e '#!/bin/sh\nexec `dirname $0`/python%{LDVERSION_optimized}-`uname -m`-co
 echo '[ $? -eq 127 ] && echo "Could not find python%{LDVERSION_optimized}-`uname -m`-config. Look around to see available arches." >&2' >> \
   %{buildroot}%{_bindir}/python%{LDVERSION_optimized}-config
   chmod +x %{buildroot}%{_bindir}/python%{LDVERSION_optimized}-config
+
+# Remove stuff that would conflict with python3 package
+mv %{buildroot}%{_bindir}/python{3,%{pyshortver}}
+rm %{buildroot}%{_bindir}/*3
+rm %{buildroot}%{_bindir}/python3-*
+rm %{buildroot}%{_bindir}/pyvenv
+rm %{buildroot}%{_libdir}/libpython3.so
+rm %{buildroot}%{_mandir}/man1/python3.1*
+rm %{buildroot}%{_libdir}/pkgconfig/python3.pc
 
 # ======================================================
 # Running the upstream test suite
@@ -1412,11 +1412,10 @@ CheckPython optimized
 %files
 %defattr(-, root, root)
 %doc LICENSE README
-%{_bindir}/pydoc*
-%{_bindir}/python3
+%{_bindir}/pydoc%{pybasever}
 %{_bindir}/python%{pybasever}
+%{_bindir}/python%{pyshortver}
 %{_bindir}/python%{pybasever}m
-%{_bindir}/pyvenv
 %{_bindir}/pyvenv-%{pybasever}
 %{_mandir}/*/*
 
@@ -1605,7 +1604,6 @@ CheckPython optimized
 %{_includedir}/python%{LDVERSION_optimized}/%{_pyconfig_h}
 
 %{_libdir}/%{py_INSTSONAME_optimized}
-%{_libdir}/libpython3.so
 %if 0%{?with_systemtap}
 %dir %(dirname %{tapsetdir})
 %dir %{tapsetdir}
@@ -1617,19 +1615,16 @@ CheckPython optimized
 %{pylibdir}/config-%{LDVERSION_optimized}/*
 %{_includedir}/python%{LDVERSION_optimized}/*.h
 %doc Misc/README.valgrind Misc/valgrind-python.supp Misc/gdbinit
-%{_bindir}/python3-config
 %{_bindir}/python%{pybasever}-config
 %{_bindir}/python%{LDVERSION_optimized}-config
 %{_bindir}/python%{LDVERSION_optimized}-*-config
 %{_libdir}/libpython%{LDVERSION_optimized}.so
 %{_libdir}/pkgconfig/python-%{LDVERSION_optimized}.pc
 %{_libdir}/pkgconfig/python-%{pybasever}.pc
-%{_libdir}/pkgconfig/python3.pc
 %{_rpmconfigdir}/macros.d/macros.pybytecompile%{pybasever}
 
-%{_bindir}/python3-2to3
 %{_bindir}/2to3-%{pybasever}
-%{_bindir}/idle*
+%{_bindir}/idle%{pybasever}
 %{pylibdir}/Tools
 %doc %{pylibdir}/Doc
 
@@ -1667,7 +1662,6 @@ CheckPython optimized
 
 # Analog of the core subpackage's files:
 %{_bindir}/python%{LDVERSION_debug}
-%{_bindir}/python3-debug
 
 # Analog of the -libs subpackage's files:
 # ...with debug builds of the built-in "extension" modules:
