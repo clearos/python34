@@ -104,11 +104,16 @@
 # (/usr/bin/python, rather than the freshly built python), thus leading to
 # numerous syntax errors, and incorrect magic numbers in the .pyc files.  We
 # thus override __os_install_post to avoid invoking this script:
+%if 0%{?fedora} || 0%{?rhel} >= 7
+%global brp_python_hardlink /usr/lib/rpm/brp-python-hardlink
+%else
+%global brp_python_hardlink /usr/lib/rpm/redhat/brp-python-hardlink
+%endif
 %global __os_install_post /usr/lib/rpm/brp-compress \
   %{!?__debug_package:/usr/lib/rpm/brp-strip %{__strip}} \
   /usr/lib/rpm/brp-strip-static-archive %{__strip} \
   /usr/lib/rpm/brp-strip-comment-note %{__strip} %{__objdump} \
-  /usr/lib/rpm/brp-python-hardlink 
+  %{brp_python_hardlink}
 # to remove the invocation of brp-python-bytecompile, whilst keeping the
 # invocation of brp-python-hardlink (since this should still work for python3
 # pyc/pyo files)
@@ -148,7 +153,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.3
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -167,7 +172,11 @@ BuildRequires: db4-devel >= 4.7
 
 # expat 2.1.0 added the symbol XML_SetHashSalt without bumping SONAME.  We use
 # it (in pyexpat) in order to enable the fix in Python-3.2.3 for CVE-2012-0876:
+%if 0%{?fedora} || 0%{?rhel} >= 7
 BuildRequires: expat-devel >= 2.1.0
+%else
+Provides:      bundled(expat) = 2.1.0
+%endif
 
 BuildRequires: findutils
 BuildRequires: gcc-c++
@@ -250,6 +259,10 @@ Source8: check-pyc-and-pyo-timestamps.py
 # Fixup distutils/unixccompiler.py to remove standard library path from rpath:
 # Was Patch0 in ivazquez' python3000 specfile:
 Patch1:         Python-3.1.1-rpath.patch
+
+# readline test fails on EL6 readline 6.0
+# https://bugs.python.org/issue19884
+Patch2:         python34-readline.patch
 
 # Some tests were removed due to audiotest.au not being packaged. This was
 # however added to the archive in 3.3.1, so we no longer delete the tests.
@@ -818,7 +831,9 @@ Group:          Development/Libraries
 # this symbol (in pyexpat), so we must explicitly state this dependency to
 # prevent "import pyexpat" from failing with a linker error if someone hasn't
 # yet upgraded expat:
+%if 0%{?fedora} || 0%{?rhel} >= 7
 Requires: expat >= 2.1.0
+%endif
 
 %description libs
 This package contains files used to embed Python 3 into applications.
@@ -918,7 +933,9 @@ cp -a %{SOURCE7} .
 # Ensure that we're using the system copy of various libraries, rather than
 # copies shipped by upstream in the tarball:
 #   Remove embedded copy of expat:
+%if 0%{?fedora} || 0%{?rhel} >= 7
 rm -r Modules/expat || exit 1
+%endif
 
 #   Remove embedded copy of libffi:
 for SUBDIR in darwin libffi libffi_arm_wince libffi_msvc libffi_osx ; do
@@ -949,6 +966,7 @@ sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/en
 # Apply patches:
 #
 %patch1 -p1
+%patch2 -p1 -b .readline
 # 3: upstream as of Python 3.3.1
 
 %if 0%{?with_systemtap}
@@ -1134,7 +1152,9 @@ BuildPython() {
   --enable-shared \
   --with-computed-gotos=%{with_computed_gotos} \
   --with-dbmliborder=gdbm:ndbm:bdb \
+%if 0%{?fedora} || 0%{?rhel} >= 7
   --with-system-expat \
+%endif
   --with-system-ffi \
   --enable-loadable-sqlite-extensions \
 %if 0%{?with_systemtap}
@@ -1419,8 +1439,8 @@ find %{buildroot} \
     -perm 555 -exec chmod 755 {} \;
 
 # Install macros for rpm:
-mkdir -p %{buildroot}/%{_rpmconfigdir}/macros.d/
-install -m 644 %{SOURCE3} %{buildroot}/%{_rpmconfigdir}/macros.d/
+mkdir -p %{buildroot}/%{rpmmacrodir}
+install -m 644 %{SOURCE3} %{buildroot}/%{rpmmacrodir}/
 
 # Ensure that the curses module was linked against libncursesw.so, rather than
 # libncurses.so (bug 539917)
@@ -1839,7 +1859,7 @@ rm -fr %{buildroot}
 %if 0%{?main_python3}
 %{_libdir}/pkgconfig/python3.pc
 %endif
-%{_rpmconfigdir}/macros.d/macros.pybytecompile%{pybasever}
+%{rpmmacrodir}/macros.pybytecompile%{pybasever}
 
 %files tools
 %if 0%{?main_python3}
@@ -2003,6 +2023,9 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Wed Aug 24 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-8
+- Update to build on EL6
+
 * Tue Aug 09 2016 Charalampos Stratakis <cstratak@redhat.com> - 3.4.3-7
 - Fix for CVE-2016-1000110 HTTPoxy attack
 
