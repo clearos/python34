@@ -773,7 +773,7 @@ Provides: bundled(python3-pip) = 6.0.8
 Provides: bundled(python3-setuptools) = 12.0.5
 
 %description
-Python 3.5 package for developers.
+Python 3.4 package for developers.
 No security fixes will be applied.
 
 # ======================================================
