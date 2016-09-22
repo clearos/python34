@@ -125,8 +125,8 @@
 # ==================
 Summary: Version 3.4 of the Python programming language
 Name: python%{pyshortver}
-Version: %{pybasever}.3
-Release: 11%{?dist}
+Version: %{pybasever}.5
+Release: 1%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -671,10 +671,6 @@ Patch196: 00196-test-gdb-match-addr-before-builtin.patch
 # FIXED UPSTREAM
 # Patch197: 00197-fix-CVE-2014-4650.patch
 
-# OpenSSL disabled SSLv3 in SSLv23 method
-# This patch alters python tests to reflect this change
-# Issue: http://bugs.python.org/issue22638 Upstream discussion about SSLv3 in Python
-Patch199: 00199-alter-tests-to-reflect-sslv3-disabled.patch
 
 # 00200 #                                                                                           
 # Fix for gettext plural form headers (lines that begin with "#")                                   
@@ -688,41 +684,8 @@ Patch200: 00200-gettext-plural-fix.patch
 # Note: Backported from scl
 Patch201: 00201-fix-memory-leak-in-gdbm.patch 
 
-# 00202 #
-# Fixes undefined behaviour in faulthandler which caused test to hang on x86_64
-# http://bugs.python.org/issue23433
-Patch202: 00202-fix-undefined-behaviour-in-faulthandler.patch
-
 # test_threading fails in koji dues to it's handling of signals
 Patch203: 00203-disable-threading-test-koji.patch
-
-# openssl requires DH keys to be > 768bits
-Patch204: 00204-increase-dh-keys-size.patch
-
-# 00209 #
-# CVE-2016-5636: http://seclists.org/oss-sec/2016/q2/560
-# rhbz#1345859: https://bugzilla.redhat.com/show_bug.cgi?id=1345859
-# https://hg.python.org/cpython/rev/10dad6da1b28/
-# https://hg.python.org/cpython/rev/5533a9e02b21
-# Fix possible integer overflow and heap corruption in zipimporter.get_data()
-# FIXED UPSTREAM: https://bugs.python.org/issue26171
-Patch209: 00209-CVE-2016-5636-buffer-overflow-in-zipimport-module-fix.patch
-
-# 00210 #
-# CVE-2016-0772 python: smtplib StartTLS stripping attack
-# rhbz#1303647: https://bugzilla.redhat.com/show_bug.cgi?id=1303647
-# rhbz#1346345: https://bugzilla.redhat.com/show_bug.cgi?id=1346345
-# FIXED UPSTREAM: https://hg.python.org/cpython/rev/d590114c2394
-# Raise an error when STARTTLS fails
-Patch210: 00210-Raise-an-error-when-STARTTLS-fails.patch
-
-# 00211 #
-# CVE-2016-5699 python: http protocol steam injection attack
-#   https://bugzilla.redhat.com/show_bug.cgi?id=1303699
-#   FIXED UPSTREAM: https://hg.python.org/cpython/rev/bf3e1c9b80e9
-# Disabled HTTP header injections in http.client
-# Resolves: rhbz#1331392
-Patch211: 00211-Disabled-HTTP-header-injections-in-http-client.patch
 
 # 00212 #
 # Fix test breakage with version 2.2.0 of Expat
@@ -910,14 +873,8 @@ done
 # 00195: upstream as of Python 3.4.2
 %patch196 -p1
 # 00197: upstream as of Python 3.4.2
-%patch199 -p1
-%patch202 -p1
 %patch203 -p1
-%patch204 -p1
 
-%patch209 -p1
-%patch210 -p1
-%patch211 -p1
 %patch212 -p1
 
 # Currently (2010-01-15), http://docs.python.org/library is for 2.6, and there
@@ -1469,5 +1426,8 @@ CheckPython optimized
 # ======================================================
 
 %changelog
+* Thu Sep 22 2016 Miro Hrončok <mhroncok@redhat.com> - 3.4.5-1
+- Updated to 3.4.5
+
 * Thu Aug 11 2016 Miro Hrončok <mhroncok@redhat.com> - 3.4.3-11
 - Imported from F23
