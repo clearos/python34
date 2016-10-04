@@ -152,8 +152,8 @@
 # ==================
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
-Version: %{pybasever}.3
-Release: 9%{?dist}
+Version: %{pybasever}.5
+Release: 1%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -740,41 +740,8 @@ Patch200: 00200-gettext-plural-fix.patch
 # Note: Backported from scl
 Patch201: 00201-fix-memory-leak-in-gdbm.patch 
 
-# 00202 #
-# Fixes undefined behaviour in faulthandler which caused tests to hang in on x86_64
-# http://bugs.python.org/issue23433
-Patch202: 00202-fix-undefined-behaviour-in-faulthandler.patch
-
 # test_threading fails in koji dues to it's handling of signals
 Patch203: 00203-disable-threading-test-koji.patch
-
-# openssl requires DH keys to be > 768bits
-Patch204: 00204-increase-dh-keys-size.patch
-
-# 00237 #
-# CVE-2016-0772 python: smtplib StartTLS stripping attack
-#   https://bugzilla.redhat.com/show_bug.cgi?id=1303647
-#   FIXED UPSTREAM: https://hg.python.org/cpython/rev/d590114c2394
-# Raise an error when STARTTLS fails
-# Resolves: rhbz#1348973
-Patch237: 00237-CVE-2016-0772-smtplib.patch
-
-# 00238 #
-# CVE-2016-5699 python: http protocol steam injection attack
-#   https://bugzilla.redhat.com/show_bug.cgi?id=1303699
-#   FIXED UPSTREAM: https://hg.python.org/cpython/rev/bf3e1c9b80e9
-# Disabled HTTP header injections in http.client
-# Resolves: rhbz#1348982
-Patch238: 00238-CVE-2016-5699-http-client.patch
-
-# 00241 #
-# CVE-2016-5636: http://seclists.org/oss-sec/2016/q2/560
-# rhbz#1356365: https://bugzilla.redhat.com/show_bug.cgi?id=1356365
-# https://hg.python.org/cpython/rev/985fc64c60d6/
-# https://hg.python.org/cpython/rev/2edbdb79cd6d
-# Fix possible integer overflow and heap corruption in zipimporter.get_data()
-# FIXED UPSTREAM: https://bugs.python.org/issue26171
-Patch241: 00241-CVE-2016-5636-buffer-overflow-in-zipimport-module-fix.patch
 
 # 00242 #
 # HTTPoxy attack (CVE-2016-1000110)
@@ -1072,12 +1039,7 @@ sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/en
 %patch196 -p1
 # 00197: upstream as of Python 3.4.2
 # 00199: doesn't apply to RHEL 7
-%patch202 -p1
 %patch203 -p1
-%patch204 -p1
-%patch237 -p1
-%patch238 -p1
-%patch241 -p1
 %patch242 -p1
 %patch248 -p1
 
@@ -2031,6 +1993,9 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Fri Oct 14 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.5-1
+- Update to 3.4.5
+
 * Fri Oct 14 2016 Charalampos Stratakis <cstratak@redhat.com> - 3.4.3-9
 - Ensure gc tracking is off when invoking weakref callbacks
 
