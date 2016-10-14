@@ -153,7 +153,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.3
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -784,6 +784,13 @@ Patch241: 00241-CVE-2016-5636-buffer-overflow-in-zipimport-module-fix.patch
 # Resolves: rhbz#1359179
 Patch242: 00242-CVE-2016-1000110-httpoxy.patch
 
+# 00248 #
+# Ensure gc tracking is off when invoking weakref callbacks
+# Resolves: rhbz#1384957
+# Backported from python 3.5+
+# FIXED UPSTREAM: http://bugs.python.org/issue26617
+Patch248: 00248-ensure-gc-tracking-is-off-when-invoking-weakref-callbacks.patch
+
 # (New patches go here ^^^)
 #
 # When adding new patches to "python" and "python3" in Fedora, EL, etc.,
@@ -1072,6 +1079,7 @@ sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/en
 %patch238 -p1
 %patch241 -p1
 %patch242 -p1
+%patch248 -p1
 
 
 # Currently (2010-01-15), http://docs.python.org/library is for 2.6, and there
@@ -2023,6 +2031,9 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Fri Oct 14 2016 Charalampos Stratakis <cstratak@redhat.com> - 3.4.3-9
+- Ensure gc tracking is off when invoking weakref callbacks
+
 * Wed Aug 24 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.3-8
 - Update to build on EL6
 

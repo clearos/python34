@@ -1,0 +1,87 @@
+
+# HG changeset patch
+# User Benjamin Peterson <benjamin@python.org>
+# Date 1475564402 25200
+# Node ID c9b7272e25532f84d7feb1b0d942978329156ace
+# Parent  b24d0f274623d100e9bad7a4cb1b3f1a3e0b82b1
+ensure gc tracking is off when invoking weakref callbacks (closes #26617)
+
+diff --git a/Lib/test/test_weakref.py b/Lib/test/test_weakref.py
+--- a/Lib/test/test_weakref.py
++++ b/Lib/test/test_weakref.py
+@@ -845,6 +845,14 @@ class ReferencesTestCase(TestBase):
+         with self.assertRaises(AttributeError):
+             ref1.__callback__ = lambda ref: None
+ 
++    def test_callback_gcs(self):
++        class ObjectWithDel(Object):
++            def __del__(self): pass
++        x = ObjectWithDel(1)
++        ref1 = weakref.ref(x, lambda ref: support.gc_collect())
++        del x
++        support.gc_collect()
++
+ 
+ class SubclassableWeakrefTestCase(TestBase):
+
+diff --git a/Objects/typeobject.c b/Objects/typeobject.c
+--- a/Objects/typeobject.c
++++ b/Objects/typeobject.c
+@@ -1123,11 +1123,6 @@ subtype_dealloc(PyObject *self)
+     Py_TRASHCAN_SAFE_BEGIN(self);
+     --_PyTrash_delete_nesting;
+     -- tstate->trash_delete_nesting;
+-    /* DO NOT restore GC tracking at this point.  weakref callbacks
+-     * (if any, and whether directly here or indirectly in something we
+-     * call) may trigger GC, and if self is tracked at that point, it
+-     * will look like trash to GC and GC will try to delete self again.
+-     */
+ 
+     /* Find the nearest base with a different tp_dealloc */
+     base = type;
+@@ -1138,30 +1133,36 @@ subtype_dealloc(PyObject *self)
+ 
+     has_finalizer = type->tp_finalize || type->tp_del;
+ 
+-    /* Maybe call finalizer; exit early if resurrected */
+-    if (has_finalizer)
++    if (type->tp_finalize) {
+         _PyObject_GC_TRACK(self);
+-
+-    if (type->tp_finalize) {
+         if (PyObject_CallFinalizerFromDealloc(self) < 0) {
+             /* Resurrected */
+             goto endlabel;
+         }
+-    }
+-    /* If we added a weaklist, we clear it.      Do this *before* calling
+-       tp_del, clearing slots, or clearing the instance dict. */
++        _PyObject_GC_UNTRACK(self);
++    }
++    /*
++      If we added a weaklist, we clear it. Do this *before* calling tp_del,
++      clearing slots, or clearing the instance dict.
++
++      GC tracking must be off at this point. weakref callbacks (if any, and
++      whether directly here or indirectly in something we call) may trigger GC,
++      and if self is tracked at that point, it will look like trash to GC and GC
++      will try to delete self again.
++    */
+     if (type->tp_weaklistoffset && !base->tp_weaklistoffset)
+         PyObject_ClearWeakRefs(self);
+ 
+     if (type->tp_del) {
++        _PyObject_GC_TRACK(self);
+         type->tp_del(self);
+         if (self->ob_refcnt > 0) {
+             /* Resurrected */
+             goto endlabel;
+         }
++        _PyObject_GC_UNTRACK(self);
+     }
+     if (has_finalizer) {
+-        _PyObject_GC_UNTRACK(self);
+         /* New weakrefs could be created during the finalizer call.
+            If this occurs, clear them out without calling their
+            finalizers since they might rely on part of the object
+
