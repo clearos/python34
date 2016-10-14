@@ -743,6 +743,11 @@ Patch201: 00201-fix-memory-leak-in-gdbm.patch
 # test_threading fails in koji dues to it's handling of signals
 Patch203: 00203-disable-threading-test-koji.patch
 
+# 00205 #
+# LIBPL variable in makefile takes LIBPL from configure.ac
+# but the LIBPL variable defined there doesn't respect libdir macro
+Patch205: 00205-make-libpl-respect-lib64.patch
+
 # 00242 #
 # HTTPoxy attack (CVE-2016-1000110)
 # https://httpoxy.org/
@@ -1040,6 +1045,7 @@ sed -r -i s/'_PIP_VERSION = "[0-9.]+"'/'_PIP_VERSION = "%{pip_version}"'/ Lib/en
 # 00197: upstream as of Python 3.4.2
 # 00199: doesn't apply to RHEL 7
 %patch203 -p1
+%patch205 -p1
 %patch242 -p1
 %patch248 -p1
 
