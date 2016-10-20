@@ -91,7 +91,11 @@
 %global with_computed_gotos yes
 
 # Turn this to 0 to turn off the "check" phase:
+%ifarch aarch64
+%global run_selftest_suite 0
+%else
 %global run_selftest_suite 1
+%endif
 
 # We want to byte-compile the .py files within the packages using the new
 # python3 binary.
@@ -153,7 +157,7 @@
 Summary: Version 3 of the Python programming language aka Python 3000
 Name: python%{pyshortver}
 Version: %{pybasever}.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -1999,6 +2003,9 @@ rm -fr %{buildroot}
 # ======================================================
 
 %changelog
+* Thu Oct 20 2016 Peter Robinson <pbrobinson@fedoraproject.org> 3.4.5-2
+- Temporarily disable tests on aarch64
+
 * Fri Oct 14 2016 Orion Poplawski <orion@cora.nwra.com> - 3.4.5-1
 - Update to 3.4.5
 
