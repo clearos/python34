@@ -160,10 +160,15 @@ BuildRequires: libX11-devel
 BuildRequires: ncurses-devel
 # workaround http://bugs.python.org/issue19804 (test_uuid requires ifconfig)
 BuildRequires: net-tools
-BuildRequires: openssl-devel
 BuildRequires: pkgconfig
 BuildRequires: readline-devel
 BuildRequires: sqlite-devel
+
+%if 0%{?fedora} >= 26
+BuildRequires: compat-openssl10-devel
+%else
+BuildRequires: openssl-devel
+%endif
 
 %if 0%{?with_systemtap}
 BuildRequires: systemtap-sdt-devel
@@ -1190,6 +1195,7 @@ CheckPython optimized
 %changelog
 * Fri Oct 21 2016 Miro Hrončok <mhroncok@redhat.com> - 3.4.5-2
 - Reword the description
+- On Fedora 26+, BR compat-openssl10-devel
 
 * Thu Sep 22 2016 Miro Hrončok <mhroncok@redhat.com> - 3.4.5-1
 - Updated to 3.4.5
