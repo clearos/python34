@@ -126,7 +126,7 @@
 Summary: Version 3.4 of the Python programming language
 Name: python%{pyshortver}
 Version: %{pybasever}.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: Python
 Group: Development/Languages
 
@@ -529,8 +529,13 @@ Provides: bundled(python3-pip) = 6.0.8
 Provides: bundled(python3-setuptools) = 12.0.5
 
 %description
-Python 3.4 package for developers.
-No security fixes will be applied.
+Python %{pybasever} package for developers.
+
+This package exists to allow developers to test their code against an older
+version of Python. This is not a full Python stack and if you wish to run
+your applications with Python %{pybasever}, see other distributions
+that support it, such as CentOS or RHEL with Software Collections.
+
 
 # ======================================================
 # The prep phase of the build:
@@ -1183,6 +1188,9 @@ CheckPython optimized
 # ======================================================
 
 %changelog
+* Fri Oct 21 2016 Miro Hrončok <mhroncok@redhat.com> - 3.4.5-2
+- Reword the description
+
 * Thu Sep 22 2016 Miro Hrončok <mhroncok@redhat.com> - 3.4.5-1
 - Updated to 3.4.5
 
